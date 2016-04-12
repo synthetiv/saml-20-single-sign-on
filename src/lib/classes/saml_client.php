@@ -43,7 +43,7 @@ class SAML_Client
       $attrs = $this->saml->getAttributes();
       if(array_key_exists($this->settings->get_attribute('username'), $attrs) )
       {
-        $username = $attrs[$this->settings->get_attribute('username')][0];
+        $username = sanitize_user( $attrs[$this->settings->get_attribute('username')][0], true );
         if(get_user_by('login',$username))
         {
           $this->simulate_signon($username);
@@ -93,6 +93,7 @@ class SAML_Client
     if( array_key_exists($this->settings->get_attribute('username'),$attrs) )
     {
       $login = (array_key_exists($this->settings->get_attribute('username'),$attrs)) ? $attrs[$this->settings->get_attribute('username')][0] : 'NULL';
+      $login = sanitize_user( $login, true );
       $email = (array_key_exists($this->settings->get_attribute('email'),$attrs)) ? $attrs[$this->settings->get_attribute('email')][0] : '';
       $first_name = (array_key_exists($this->settings->get_attribute('firstname'),$attrs)) ? $attrs[$this->settings->get_attribute('firstname')][0] : '';
       $last_name = (array_key_exists($this->settings->get_attribute('lastname'),$attrs)) ? $attrs[$this->settings->get_attribute('lastname')][0] : '';
@@ -179,7 +180,7 @@ class SAML_Client
       $role = false;
     }
 
-    $user = get_user_by('login',$attrs[$this->settings->get_attribute('username')][0]);
+    $user = get_user_by('login', sanitize_user( $attrs[$this->settings->get_attribute('username')][0], true ) );
     if($user)
     {
       $user->set_role($role);
